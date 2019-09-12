@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Станислав Ланюк](https://up.htmlacademy.ru/javascript/18/user/857861).
-* Наставник: `Неизвестно`.
+* Наставник: [Артем Черкасов](https://htmlacademy.ru/profile/id530727).
 
 ---
 
