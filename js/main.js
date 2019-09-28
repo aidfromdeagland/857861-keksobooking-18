@@ -1,5 +1,11 @@
 'use strict';
 
+var map = document.querySelector('.map');
+
+var LOCATION_MIN_X = 0;
+var LOCATION_MAX_X = map.offsetWidth;
+var LOCATION_MIN_Y = 130;
+var LOCATION_MAX_Y = 630;
 var MIN_PRICE = 100;
 var MAX_PRICE = 3200;
 var MIN_ROOMS = 1;
@@ -14,8 +20,11 @@ var PHOTO_URLS = [
   'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
   'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
 ];
+var ELEMENTS_QUANTITY = 8;
 var PIN_WIDTH = 50;
 var PIN_HEIGHT = 70;
+
+map.classList.remove('map--faded');
 
 var getRandomIntInclusive = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -30,18 +39,17 @@ var getRandomArray = function (sourceArray) {
   return newArray;
 };
 
-var generateArray = function () {
+var generatePins = function () {
   var arr = [];
-  var elementsQuantity = 8;
 
-  for (var i = 0; i < elementsQuantity; i++) {
+  for (var i = 0; i < ELEMENTS_QUANTITY; i++) {
     var realtyObject = {
       'author': {
         'avatar': 'img/avatars/user0' + (i + 1) + '.png'},
 
       'offer': {
         'title': 'Заголовок ' + (i + 1),
-        'address': '696, 1337',
+        'address': '',
         'price': getRandomIntInclusive(MIN_PRICE, MAX_PRICE),
         'type': TYPES[getRandomIntInclusive(0, TYPES.length - 1)],
         'rooms': getRandomIntInclusive(MIN_ROOMS, MAX_ROOMS),
@@ -54,26 +62,24 @@ var generateArray = function () {
       },
 
       'location': {
-        'x': getRandomIntInclusive(0, map.offsetWidth),
-        'y': getRandomIntInclusive(130, 630)
+        'x': getRandomIntInclusive(LOCATION_MIN_X, LOCATION_MAX_X),
+        'y': getRandomIntInclusive(LOCATION_MIN_Y, LOCATION_MAX_Y)
       }
     };
+    realtyObject.offer.address =
+    realtyObject.location.x + ', ' + realtyObject.location.y;
     arr.push(realtyObject);
   }
   return arr;
 };
 
-var map = document.querySelector('.map');
-
-map.classList.remove('map--faded');
-
-var pin = document.querySelector('#pin').content.querySelector('.map__pin');
-var apartments = generateArray();
+var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
+var apartments = generatePins();
 var pinsArea = document.querySelector('.map__pins');
 var fragmentPins = document.createDocumentFragment();
 
 var generatePin = function (index) {
-  var clonedPin = pin.cloneNode(true);
+  var clonedPin = pinTemplate.cloneNode(true);
   clonedPin.style = 'left: ' + (apartments[index].location.x - PIN_WIDTH / 2) +
   'px; top: ' + (apartments[index].location.y - PIN_HEIGHT) + 'px;';
   clonedPin.firstElementChild.src = apartments[index].author.avatar;
