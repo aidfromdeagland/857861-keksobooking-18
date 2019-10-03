@@ -183,7 +183,7 @@ var validateRooms = function () {
 
 var validateMinPrice = function () {
   if (Number(advertPrice.value) < REALTY_MIN_COSTS[advertType.value] && Number(advertPrice.value) > 0) {
-    advertPrice.setCustomValidity('Нет демпингу на Кексобукинге! \n Минимальная цена: ' + REALTY_MIN_COSTS[advertType.value] + ' рублей.');
+    advertPrice.setCustomValidity('Нет демпингу на Кексобукинге! Минимальная цена: ' + REALTY_MIN_COSTS[advertType.value] + ' рублей.');
   } else {
     advertPrice.setCustomValidity('');
     advertPrice.style.outline = 'none';
@@ -207,6 +207,7 @@ var markInvalids = function (evt) {
 };
 
 setPricePlaceholder();
+syncTimeOut();
 validateTitle();
 validateRooms();
 validateMinPrice();
