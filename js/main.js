@@ -141,7 +141,7 @@ advertAddress.value = Math.round(pinMain.offsetLeft + pinMain.offsetWidth / 2) +
 var activatePageByMouse = function () {
   map.classList.remove('map--faded');
   advertForm.classList.remove('ad-form--disabled');
-  setFormActivity('active');
+  setFormActivity('activate');
 
   advertAddress.value = Math.round(pinMain.offsetLeft + pinMain.offsetWidth / 2) + ', ' + Math.round(pinMain.offsetTop + pinMain.offsetHeight + PIN_MAIN_TAIL_HEIGHT);
 
