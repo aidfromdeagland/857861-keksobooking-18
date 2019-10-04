@@ -7,12 +7,12 @@ var LOCATION_MIN_X = 0;
 var LOCATION_MAX_X = map.offsetWidth;
 var LOCATION_MIN_Y = 130;
 var LOCATION_MAX_Y = 630;
-var MIN_PRICE = 100;
-var MAX_PRICE = 3200;
+var ADVERT_MAXIMUM_PRICE = 1000000;
+var ADVERT_MINIMUM_PRICE = 0;
 var MIN_ROOMS = 1;
-var MAX_ROOMS = 8;
+var MAX_ROOMS = 3;
 var MIN_GUESTS = 1;
-var MAX_GUESTS = 11;
+var MAX_GUESTS = 3;
 var TYPES = ['palace', 'flat', 'house', 'bungalo'];
 var CHECK_TIMES = ['12:00', '13:00', '14:00'];
 var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
@@ -31,12 +31,13 @@ var REALTY_MIN_COSTS = {
   'house': 5000,
   'bungalo': 0
 };
-var MAXIMUM_ROOM_CAPACITY = {
+
+var TITLE_MIN_LENGTH = 30;
+var TITLE_MAX_LENGTH = 100;
+var ROOM_CAPACITY_MAXIMUM = {
   'rooms': [1, 2, 3, 100],
   'guests': [1, 2, 3, 0]
 };
-
-// map.classList.remove('map--faded'); активация страницы
 
 var getRandomIntInclusive = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -62,7 +63,7 @@ var generatePins = function () {
       'offer': {
         'title': 'Заголовок ' + (i + 1),
         'address': '',
-        'price': getRandomIntInclusive(MIN_PRICE, MAX_PRICE),
+        'price': getRandomIntInclusive(ADVERT_MINIMUM_PRICE, ADVERT_MAXIMUM_PRICE),
         'type': TYPES[getRandomIntInclusive(0, TYPES.length - 1)],
         'rooms': getRandomIntInclusive(MIN_ROOMS, MAX_ROOMS),
         'guests': getRandomIntInclusive(MIN_GUESTS, MAX_GUESTS),
@@ -113,26 +114,34 @@ var advertAddress = advertForm.querySelector('#address');
 var mapFiltersSelectCollection = mapFilters.querySelectorAll('select');
 var pinMain = document.querySelector('.map__pin--main');
 
-for (var i = 0; i < fieldsetCollection.length; i++) {
-  fieldsetCollection[i].setAttribute('disabled', 'true');
-}
+var setFormActivity = function (status) {
+  if (status === 'activate') {
+    for (var i = 0; i < fieldsetCollection.length; i++) {
+      fieldsetCollection[i].disabled = false;
+    }
 
-for (i = 0; i < mapFiltersSelectCollection.length; i++) {
-  mapFiltersSelectCollection[i].setAttribute('disabled', 'true');
-}
+    for (i = 0; i < mapFiltersSelectCollection.length; i++) {
+      mapFiltersSelectCollection[i].disabled = false;
+    }
+  }
+
+  if (status === 'deactivate') {
+    for (i = 0; i < fieldsetCollection.length; i++) {
+      fieldsetCollection[i].disabled = true;
+    }
+
+    for (i = 0; i < mapFiltersSelectCollection.length; i++) {
+      mapFiltersSelectCollection[i].disabled = true;
+    }
+  }
+};
 
 advertAddress.value = Math.round(pinMain.offsetLeft + pinMain.offsetWidth / 2) + ', ' + Math.round(pinMain.offsetTop + pinMain.offsetHeight / 2);
 
 var activatePageByMouse = function () {
   map.classList.remove('map--faded');
   advertForm.classList.remove('ad-form--disabled');
-  for (i = 0; i < fieldsetCollection.length; i++) {
-    fieldsetCollection[i].removeAttribute('disabled');
-  }
-
-  for (i = 0; i < mapFiltersSelectCollection.length; i++) {
-    mapFiltersSelectCollection[i].removeAttribute('disabled');
-  }
+  setFormActivity('active');
 
   advertAddress.value = Math.round(pinMain.offsetLeft + pinMain.offsetWidth / 2) + ', ' + Math.round(pinMain.offsetTop + pinMain.offsetHeight + PIN_MAIN_TAIL_HEIGHT);
 
@@ -159,12 +168,12 @@ var advertTimeOut = advertForm.querySelector('#timeout');
 var advertRoomNumber = advertForm.querySelector('#room_number');
 var advertCapacity = advertForm.querySelector('#capacity');
 
-advertTitle.setAttribute('required', 'true');
-advertPrice.setAttribute('required', 'true');
-advertPrice.setAttribute('max', '1000000');
+advertTitle.required = true;
+advertPrice.required = true;
+advertPrice.max = ADVERT_MAXIMUM_PRICE;
 
 var validateTitle = function () {
-  if (advertTitle.value.length < 30 || advertTitle.value.length > 100) {
+  if (advertTitle.value.length < TITLE_MIN_LENGTH || advertTitle.value.length > TITLE_MAX_LENGTH) {
     advertTitle.setCustomValidity('Длина заголовка: от 30 до 100 кексимволов');
   } else {
     advertTitle.setCustomValidity('');
@@ -173,7 +182,7 @@ var validateTitle = function () {
 };
 
 var validateRooms = function () {
-  if (Number(advertCapacity.value) > MAXIMUM_ROOM_CAPACITY.guests[MAXIMUM_ROOM_CAPACITY.rooms.indexOf(Number(advertRoomNumber.value))]) {
+  if (Number(advertCapacity.value) > ROOM_CAPACITY_MAXIMUM.guests[ROOM_CAPACITY_MAXIMUM.rooms.indexOf(Number(advertRoomNumber.value))]) {
     advertRoomNumber.setCustomValidity('Для указанного количества гостей не подходит данное количество комнат');
   } else {
     advertRoomNumber.setCustomValidity('');
