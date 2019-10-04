@@ -114,27 +114,25 @@ var advertAddress = advertForm.querySelector('#address');
 var mapFiltersSelectCollection = mapFilters.querySelectorAll('select');
 var pinMain = document.querySelector('.map__pin--main');
 
+var disableForm = function (boolean) {
+  for (var i = 0; i < fieldsetCollection.length; i++) {
+    fieldsetCollection[i].disabled = boolean;
+  }
+
+  for (i = 0; i < mapFiltersSelectCollection.length; i++) {
+    mapFiltersSelectCollection[i].disabled = boolean;
+  }
+}; // arguments: true or false
+
 var setFormActivity = function (status) {
   if (status === 'activate') {
-    for (var i = 0; i < fieldsetCollection.length; i++) {
-      fieldsetCollection[i].disabled = false;
-    }
-
-    for (i = 0; i < mapFiltersSelectCollection.length; i++) {
-      mapFiltersSelectCollection[i].disabled = false;
-    }
+    disableForm(false);
   }
 
   if (status === 'deactivate') {
-    for (i = 0; i < fieldsetCollection.length; i++) {
-      fieldsetCollection[i].disabled = true;
-    }
-
-    for (i = 0; i < mapFiltersSelectCollection.length; i++) {
-      mapFiltersSelectCollection[i].disabled = true;
-    }
+    disableForm(true);
   }
-};
+}; // arguments: activate or deactivate
 
 advertAddress.value = Math.round(pinMain.offsetLeft + pinMain.offsetWidth / 2) + ', ' + Math.round(pinMain.offsetTop + pinMain.offsetHeight / 2);
 
