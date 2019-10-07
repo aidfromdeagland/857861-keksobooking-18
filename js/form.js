@@ -13,9 +13,11 @@
 
   var TITLE_MIN_LENGTH = 30;
   var TITLE_MAX_LENGTH = 100;
-  var ROOM_CAPACITY_MAXIMUM = {
-    'rooms': [1, 2, 3, 100],
-    'guests': [1, 2, 3, 0]
+  var MAX_CAPACITY_PER_ROOMS = {
+    '1': 1,
+    '2': 2,
+    '3': 3,
+    '0': 100
   };
 
   var fieldsetCollection = document.querySelectorAll('fieldset');
@@ -56,7 +58,7 @@
 
     pinMain.removeEventListener('mousedown', activatePageByMouse);
 
-    window.map.drawPins(window.map.apartments.length); // генерация пинов
+    window.map.drawPins(window.data.apartments.length); // генерация пинов
   };
 
   var activatePageByEnter = function (evt) {
@@ -91,7 +93,8 @@
   };
 
   var validateRooms = function () {
-    if (Number(advertCapacity.value) > ROOM_CAPACITY_MAXIMUM.guests[ROOM_CAPACITY_MAXIMUM.rooms.indexOf(Number(advertRoomNumber.value))]) {
+    if (Number(advertRoomNumber.value) < MAX_CAPACITY_PER_ROOMS[Number(advertCapacity.value)] ||
+    Number(advertRoomNumber.value) === 100 && Number(advertCapacity.value) !== 0) {
       advertRoomNumber.setCustomValidity('Для указанного количества гостей не подходит данное количество комнат');
     } else {
       advertRoomNumber.setCustomValidity('');
