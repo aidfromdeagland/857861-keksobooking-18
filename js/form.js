@@ -3,7 +3,6 @@
 (function () {
   var ADVERT_MAXIMUM_PRICE = 1000000;
   var ADVERT_MINIMUM_PRICE = 0;
-  var PIN_MAIN_TAIL_HEIGHT = 20;
   var REALTY_MIN_COSTS = {
     'palace': 10000,
     'flat': 1000,
@@ -25,7 +24,6 @@
   var advertForm = document.querySelector('.ad-form');
   var advertAddress = advertForm.querySelector('#address');
   var mapFiltersSelectCollection = mapFilters.querySelectorAll('select');
-  var pinMain = document.querySelector('.map__pin--main');
 
   var disableForm = function (boolean) {
     for (var i = 0; i < fieldsetCollection.length; i++) {
@@ -45,31 +43,9 @@
     if (status === 'deactivate') {
       disableForm(true);
     }
-  }; // arguments: activate or deactivate
+  }; // arguments: 'activate' or 'deactivate'
 
-  advertAddress.value = Math.round(pinMain.offsetLeft + pinMain.offsetWidth / 2) + ', ' + Math.round(pinMain.offsetTop + pinMain.offsetHeight / 2);
-
-  var activatePageByMouse = function () {
-    window.util.map.classList.remove('map--faded');
-    advertForm.classList.remove('ad-form--disabled');
-    setFormActivity('activate');
-
-    advertAddress.value = Math.round(pinMain.offsetLeft + pinMain.offsetWidth / 2) + ', ' + Math.round(pinMain.offsetTop + pinMain.offsetHeight + PIN_MAIN_TAIL_HEIGHT);
-
-    pinMain.removeEventListener('mousedown', activatePageByMouse);
-
-    window.map.drawPins(window.data.apartments.length); // генерация пинов
-  };
-
-  var activatePageByEnter = function (evt) {
-    if (evt.keyCode === window.util.ENTER_KEYCODE) {
-      activatePageByMouse();
-      pinMain.removeEventListener('keydown', activatePageByEnter);
-    }
-  };
-
-  pinMain.addEventListener('mousedown', activatePageByMouse);
-  pinMain.addEventListener('keydown', activatePageByEnter);
+  advertAddress.value = Math.round(window.map.pinMain.offsetLeft + window.map.pinMain.offsetWidth / 2) + ', ' + Math.round(window.map.pinMain.offsetTop + window.map.pinMain.offsetHeight / 2);
 
   var advertTitle = advertForm.querySelector('#title');
   var advertPrice = advertForm.querySelector('#price');
@@ -146,6 +122,9 @@
   window.form = {
     ADVERT_MINIMUM_PRICE: ADVERT_MINIMUM_PRICE,
     ADVERT_MAXIMUM_PRICE: ADVERT_MAXIMUM_PRICE,
-    REALTY_MIN_COSTS: REALTY_MIN_COSTS
+    REALTY_MIN_COSTS: REALTY_MIN_COSTS,
+    advertForm: advertForm,
+    advertAddress: advertAddress,
+    setFormActivity: setFormActivity
   };
 })();

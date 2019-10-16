@@ -2,7 +2,7 @@
 
 (function () {
   var ENTER_KEYCODE = 13;
-  // var ESC_KEYCODE = 27;
+  var ESC_KEYCODE = 27;
   var map = document.querySelector('.map');
 
   var getRandomIntInclusive = function (min, max) {
@@ -22,6 +22,7 @@
     map: map,
     getRandomIntInclusive: getRandomIntInclusive,
     getRandomArray: getRandomArray,
-    ENTER_KEYCODE: ENTER_KEYCODE
+    ENTER_KEYCODE: ENTER_KEYCODE,
+    ESC_KEYCODE: ESC_KEYCODE
   };
 })();
