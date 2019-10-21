@@ -80,8 +80,6 @@
     });
 
     window.map.deletePins();
-    console.log(window.loadedData);
-    console.log(filteredData);
     window.map.drawPins(filteredData);
   };
 
