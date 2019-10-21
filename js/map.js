@@ -11,6 +11,8 @@
   var PIN_MAIN_DEFAULT_Y = pinMain.offsetTop;
   var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
   var pinsArea = document.querySelector('.map__pins');
+  var DATA_QUANTITY = 5;
+  window.appendedPins = [];
 
 
   var renderPin = function (index, adArray) {
@@ -25,10 +27,21 @@
   var drawPins = function (adList) {
     var fragmentPins = document.createDocumentFragment();
 
-    for (var i = 0; i < adList.length; i++) {
-      fragmentPins.appendChild(renderPin(i, adList));
+    for (var i = 0; i < DATA_QUANTITY && i < adList.length; i++) {
+      if (adList[i].offer) {
+        var renderedPin = renderPin(i, adList);
+        window.appendedPins.push(renderedPin);
+        fragmentPins.appendChild(renderedPin);
+      }
     }
     pinsArea.appendChild(fragmentPins);
+  };
+
+  var deletePins = function () {
+    window.appendedPins.forEach(function (item) {
+      pinsArea.removeChild(item);
+    });
+    window.appendedPins = [];
   };
 
   var activatePageByMouse = function () {
@@ -47,7 +60,6 @@
   };
 
   var deactivatePage = function () {
-    // cancel eventListeners for mousemove, mouseup
     window.util.map.classList.add('map--faded');
     window.form.advertForm.classList.add('ad-form--disabled');
     window.form.setFormActivity('deactivate');
@@ -67,7 +79,8 @@
     drawPins: drawPins,
     PIN_MAIN_TAIL_HEIGHT: PIN_MAIN_TAIL_HEIGHT,
     PIN_MAIN_WIDTH: PIN_MAIN_WIDTH,
-    PIN_MAIN_HEIGHT: PIN_MAIN_HEIGHT
+    PIN_MAIN_HEIGHT: PIN_MAIN_HEIGHT,
+    deletePins: deletePins
   };
 
   window.dragndrop(pinMain, window.util.map);

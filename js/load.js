@@ -12,6 +12,7 @@
 
     xhr.addEventListener('load', function () {
       if (xhr.status === STATUS_SUCCESS) {
+        window.loadedData = xhr.response;
         onSuccess(xhr.response);
       } else {
         onError('Ошибка: ' + xhr.status + '.');
