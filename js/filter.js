@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-
+  var mapFiltersContainer = document.querySelector('.map__filters-container');
   var filterForm = document.querySelector('.map__filters');
   var filterFormType = document.querySelector('#housing-type');
   var filterFormPrice = document.querySelector('#housing-price');
@@ -9,7 +9,7 @@
   var filterFormGuests = document.querySelector('#housing-guests');
   var filterFormFeatures = document.querySelector('#housing-features');
 
-  var filterPriceMap = {
+  var FilterPriceMap = {
     'low': {
       MIN: 0,
       MAX: 10000
@@ -34,8 +34,8 @@
 
   var filterPrice = function (input, item) {
     if (input.value !== 'any') {
-      return item['offer']['price'] >= filterPriceMap[input.value].MIN &&
-      item['offer']['price'] < filterPriceMap[input.value].MAX;
+      return item['offer']['price'] >= FilterPriceMap[input.value].MIN &&
+      item['offer']['price'] < FilterPriceMap[input.value].MAX;
     } else {
       return true;
     }
@@ -78,11 +78,15 @@
     filteredData = filteredData.filter(function (item) {
       return filterFeatures(item);
     });
-
+    window.card.removeCard();
     window.map.deletePins();
     window.map.drawPins(filteredData);
   };
 
   filterForm.addEventListener('change', filterFormTotally);
+
+  window.filter = {
+    mapFiltersContainer: mapFiltersContainer
+  };
 
 })();

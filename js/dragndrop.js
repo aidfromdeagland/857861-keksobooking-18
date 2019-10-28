@@ -1,35 +1,38 @@
 'use strict';
 
 (function () {
+  var TOP_Y_LIMIT = 130;
+  var BOTTOM_Y_LIMIT = 630;
+
   window.dragndrop = function (element, borderElement) {
-    var elementMinX = borderElement.clientLeft - window.map.PIN_MAIN_WIDTH / 2;
-    var elementMinY = 130 - window.map.PIN_MAIN_HEIGHT;
-    var elementMaxX = borderElement.clientWidth - window.map.PIN_MAIN_WIDTH / 2;
-    var elementMaxY = 630 - window.map.PIN_MAIN_HEIGHT;
+    var elementMinX = borderElement.clientLeft - window.map.PinMainData.WIDTH / 2;
+    var elementMinY = TOP_Y_LIMIT - window.map.PinMainData.HEIGHT - window.map.PinMainData.TAIL_HEIGHT;
+    var elementMaxX = borderElement.clientWidth - window.map.PinMainData.WIDTH / 2;
+    var elementMaxY = BOTTOM_Y_LIMIT - window.map.PinMainData.HEIGHT - window.map.PinMainData.TAIL_HEIGHT;
 
     element.addEventListener('mousedown', function (evt) {
       evt.preventDefault();
 
-      var coordsStart = {
+      var CoordsStart = {
         x: evt.clientX,
         y: evt.clientY
       };
 
-      var onMouseMove = function (moveEvt) {
+      var mouseMoveHandler = function (moveEvt) {
         moveEvt.preventDefault();
 
-        var coordsDelta = {
-          x: coordsStart.x - moveEvt.clientX,
-          y: coordsStart.y - moveEvt.clientY,
+        var CoordsDelta = {
+          x: CoordsStart.x - moveEvt.clientX,
+          y: CoordsStart.y - moveEvt.clientY,
         };
 
-        coordsStart = {
+        CoordsStart = {
           x: moveEvt.clientX,
           y: moveEvt.clientY
         };
 
-        var elementCurrentX = element.offsetLeft - coordsDelta.x;
-        var elementCurrentY = element.offsetTop - coordsDelta.y;
+        var elementCurrentX = element.offsetLeft - CoordsDelta.x;
+        var elementCurrentY = element.offsetTop - CoordsDelta.y;
 
         var setPinCoord = function (value, min, max) {
           if (value < max && value > min) {
@@ -45,18 +48,18 @@
 
         element.style.left = setPinCoord(elementCurrentX, elementMinX, elementMaxX) + 'px';
         element.style.top = setPinCoord(elementCurrentY, elementMinY, elementMaxY) + 'px';
-        window.form.advertAddress.value = Math.round(window.map.pinMain.offsetLeft + window.map.PIN_MAIN_WIDTH / 2) + ', ' + Math.round(window.map.pinMain.offsetTop + window.map.PIN_MAIN_HEIGHT);
+        window.form.advertAddress.value = Math.round(window.map.pinMain.offsetLeft + window.map.PinMainData.WIDTH / 2) + ', ' + Math.round(window.map.pinMain.offsetTop + window.map.PinMainData.HEIGHT + window.map.PinMainData.TAIL_HEIGHT);
       };
 
-      var onMouseUp = function (upEvt) {
+      var mouseUpHandler = function (upEvt) {
         upEvt.preventDefault();
 
-        document.removeEventListener('mousemove', onMouseMove);
-        document.removeEventListener('mouseup', onMouseUp);
+        document.removeEventListener('mousemove', mouseMoveHandler);
+        document.removeEventListener('mouseup', mouseUpHandler);
       };
 
-      document.addEventListener('mousemove', onMouseMove);
-      document.addEventListener('mouseup', onMouseUp);
+      document.addEventListener('mousemove', mouseMoveHandler);
+      document.addEventListener('mouseup', mouseUpHandler);
     });
   };
 

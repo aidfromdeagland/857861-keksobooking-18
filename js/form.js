@@ -3,7 +3,7 @@
 (function () {
   var ADVERT_MAXIMUM_PRICE = 1000000;
   var ADVERT_MINIMUM_PRICE = 0;
-  var REALTY_MIN_COSTS = {
+  var RealtyMinCost = {
     'palace': 10000,
     'flat': 1000,
     'house': 5000,
@@ -12,40 +12,51 @@
 
   var TITLE_MIN_LENGTH = 30;
   var TITLE_MAX_LENGTH = 100;
-  var MAX_CAPACITY_PER_ROOMS = {
+  var MaxCapacityPerRooms = {
     '1': 1,
     '2': 2,
     '3': 3,
     '0': 100
   };
 
-  var fieldsetCollection = document.querySelectorAll('fieldset');
-  var mapFilters = document.querySelector('.map__filters');
+  var mapFiltersForm = document.querySelector('.map__filters');
   var advertForm = document.querySelector('.ad-form');
   var advertAddress = advertForm.querySelector('#address');
-  var mapFiltersSelectCollection = mapFilters.querySelectorAll('select');
+  var advertReset = advertForm.querySelector('.ad-form__reset');
 
-  var disableForm = function (boolean) {
-    for (var i = 0; i < fieldsetCollection.length; i++) {
-      fieldsetCollection[i].disabled = boolean;
+  var disableForm = function (form, boolean) {
+    var specificCollection = function (ancestor, selector) {
+      return ancestor.querySelectorAll(selector)
+      ;
+    };
+
+    var selects = specificCollection(form, 'select');
+    var fieldsets = specificCollection(form, 'fieldset');
+
+    for (var i = 0; i < selects.length; i++) {
+      selects[i].disabled = boolean;
     }
 
-    for (i = 0; i < mapFiltersSelectCollection.length; i++) {
-      mapFiltersSelectCollection[i].disabled = boolean;
+    for (var k = 0; k < fieldsets.length; k++) {
+      fieldsets[k].disabled = boolean;
     }
-  }; // arguments: true or false
+  };
 
-  var setFormActivity = function (status) {
-    if (status === 'activate') {
-      disableForm(false);
+  advertAddress.readOnly = true;
+
+  var setFormAddress = function (type) {
+    var tail = window.map.PinMainData.TAIL_HEIGHT;
+    var divider = 1;
+
+    if (type === 'initial') {
+      tail = 0;
+      divider = 2;
     }
 
-    if (status === 'deactivate') {
-      disableForm(true);
-    }
-  }; // arguments: 'activate' or 'deactivate'
+    advertAddress.value = Math.round(window.map.pinMain.offsetLeft + window.map.pinMain.offsetWidth / 2) + ', ' + Math.round(window.map.pinMain.offsetTop + window.map.pinMain.offsetHeight / divider + tail);
+  };
 
-  advertAddress.value = Math.round(window.map.pinMain.offsetLeft + window.map.pinMain.offsetWidth / 2) + ', ' + Math.round(window.map.pinMain.offsetTop + window.map.pinMain.offsetHeight / 2);
+  setFormAddress('initial');
 
   var advertTitle = advertForm.querySelector('#title');
   var advertPrice = advertForm.querySelector('#price');
@@ -58,6 +69,7 @@
   advertTitle.required = true;
   advertPrice.required = true;
   advertPrice.max = ADVERT_MAXIMUM_PRICE;
+  advertPrice.min = ADVERT_MINIMUM_PRICE;
 
   var validateTitle = function () {
     if (advertTitle.value.length < TITLE_MIN_LENGTH || advertTitle.value.length > TITLE_MAX_LENGTH) {
@@ -69,7 +81,7 @@
   };
 
   var validateRooms = function () {
-    if (Number(advertRoomNumber.value) < MAX_CAPACITY_PER_ROOMS[Number(advertCapacity.value)] ||
+    if (Number(advertRoomNumber.value) < MaxCapacityPerRooms[Number(advertCapacity.value)] ||
     Number(advertRoomNumber.value) === 100 && Number(advertCapacity.value) !== 0) {
       advertRoomNumber.setCustomValidity('Для указанного количества гостей не подходит данное количество комнат');
     } else {
@@ -79,8 +91,8 @@
   };
 
   var validateMinPrice = function () {
-    if (Number(advertPrice.value) < REALTY_MIN_COSTS[advertType.value] && Number(advertPrice.value) > 0) {
-      advertPrice.setCustomValidity('Нет демпингу на Кексобукинге! Минимальная цена: ' + REALTY_MIN_COSTS[advertType.value] + ' рублей.');
+    if (Number(advertPrice.value) < RealtyMinCost[advertType.value] && Number(advertPrice.value) > 0) {
+      advertPrice.setCustomValidity('Нет демпингу на Кексобукинге! Минимальная цена: ' + RealtyMinCost[advertType.value] + ' рублей.');
     } else {
       advertPrice.setCustomValidity('');
       advertPrice.style.outline = 'none';
@@ -88,7 +100,7 @@
   };
 
   var setPricePlaceholder = function () {
-    advertPrice.placeholder = REALTY_MIN_COSTS[advertType.value];
+    advertPrice.placeholder = RealtyMinCost[advertType.value];
   };
 
   var syncTimeIn = function () {
@@ -103,28 +115,78 @@
     evt.target.style.outline = '5px solid red';
   };
 
-  setPricePlaceholder();
-  syncTimeOut();
-  validateTitle();
-  validateRooms();
-  validateMinPrice();
+  var validateCombo = function () {
+    validateTitle();
+    validateRooms();
+    validateMinPrice();
+  };
 
-  advertTitle.addEventListener('input', validateTitle);
-  advertRoomNumber.addEventListener('input', validateRooms);
-  advertCapacity.addEventListener('input', validateRooms);
-  advertType.addEventListener('input', setPricePlaceholder);
-  advertType.addEventListener('input', validateMinPrice);
-  advertPrice.addEventListener('input', validateMinPrice);
-  advertTimeIn.addEventListener('input', syncTimeOut);
-  advertTimeOut.addEventListener('input', syncTimeIn);
-  advertForm.addEventListener('invalid', markInvalids, true);
+  var addFormListeners = function () {
+    advertTitle.addEventListener('input', validateTitle);
+    advertRoomNumber.addEventListener('input', validateRooms);
+    advertCapacity.addEventListener('input', validateRooms);
+    advertType.addEventListener('input', setPricePlaceholder);
+    advertType.addEventListener('input', validateMinPrice);
+    advertPrice.addEventListener('input', validateMinPrice);
+    advertTimeIn.addEventListener('input', syncTimeOut);
+    advertTimeOut.addEventListener('input', syncTimeIn);
+    advertForm.addEventListener('invalid', markInvalids, true);
+  };
+
+  var removeFormListeners = function () {
+    advertTitle.removeEventListener('input', validateTitle);
+    advertRoomNumber.removeEventListener('input', validateRooms);
+    advertCapacity.removeEventListener('input', validateRooms);
+    advertType.removeEventListener('input', setPricePlaceholder);
+    advertType.removeEventListener('input', validateMinPrice);
+    advertPrice.removeEventListener('input', validateMinPrice);
+    advertTimeIn.removeEventListener('input', syncTimeOut);
+    advertTimeOut.removeEventListener('input', syncTimeIn);
+    advertForm.removeEventListener('invalid', markInvalids, true);
+  };
+
+  var activateForm = function () {
+    advertForm.classList.remove('ad-form--disabled');
+    disableForm(advertForm, false);
+    setPricePlaceholder();
+    syncTimeOut();
+    validateCombo();
+    setFormAddress();
+    addFormListeners();
+  };
+
+  var deactivateForm = function () {
+    advertForm.reset();
+    mapFiltersForm.reset();
+    setFormAddress('initial');
+    window.map.deletePins();
+    window.card.removeCard();
+    advertForm.classList.add('ad-form--disabled');
+    disableForm(advertForm, true);
+    disableForm(mapFiltersForm, true);
+    removeFormListeners();
+  };
+
+  advertReset.addEventListener('click', function (evt) {
+    evt.preventDefault();
+    window.map.deactivatePage();
+  });
+
+  var formSubmitHandler = function (evt) {
+    evt.preventDefault();
+    var formData = new FormData(advertForm);
+    window.server.upload(formData, window.modal.showSuccessModal, window.modal.showErrorModal);
+  };
 
   window.form = {
-    ADVERT_MINIMUM_PRICE: ADVERT_MINIMUM_PRICE,
-    ADVERT_MAXIMUM_PRICE: ADVERT_MAXIMUM_PRICE,
-    REALTY_MIN_COSTS: REALTY_MIN_COSTS,
     advertForm: advertForm,
+    mapFiltersForm: mapFiltersForm,
+    disableForm: disableForm,
     advertAddress: advertAddress,
-    setFormActivity: setFormActivity
+    activateForm: activateForm,
+    deactivateForm: deactivateForm,
+    formSubmitHandler: formSubmitHandler
   };
+
+  window.map.deactivatePage();
 })();
