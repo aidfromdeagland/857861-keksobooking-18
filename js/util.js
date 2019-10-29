@@ -5,24 +5,48 @@
   var ESC_KEYCODE = 27;
   var map = document.querySelector('.map');
 
-  var getRandomIntInclusive = function (min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+  var getNounForms = function (number, options) {
+
+    if (number >= 11 && number <= 14) {
+      return options[2];
+    } else {
+      var stringedValue = number + '';
+      var lastChar = stringedValue.charAt(stringedValue.length - 1);
+
+      if (+lastChar === 1) {
+        return options[0];
+      }
+
+      if (+lastChar >= 2 && +lastChar <= 4) {
+        return options[1];
+      }
+
+      return options[2];
+    }
   };
 
-  var getRandomArray = function (sourceArray) {
-    var randomLength = getRandomIntInclusive(0, sourceArray.length);
-    var newArray = sourceArray.slice();
-    for (var i = newArray.length; i > randomLength; i--) {
-      newArray.splice(getRandomIntInclusive(0, newArray.length), 1);
-    }
-    return newArray;
+  var debounce = function (callback, delay) {
+    var timer = null;
+
+    return function () {
+      var args = arguments;
+
+      if (timer) {
+        clearTimeout(timer);
+      }
+
+      timer = setTimeout(function () {
+        callback(null, args);
+      }, delay);
+    };
   };
 
   window.util = {
-    map: map,
-    getRandomIntInclusive: getRandomIntInclusive,
-    getRandomArray: getRandomArray,
     ENTER_KEYCODE: ENTER_KEYCODE,
-    ESC_KEYCODE: ESC_KEYCODE
+    ESC_KEYCODE: ESC_KEYCODE,
+    map: map,
+    getNounForms: getNounForms,
+    debounce: debounce
   };
 })();
+
