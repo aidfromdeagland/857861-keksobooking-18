@@ -49,8 +49,6 @@
           window.map.currentPinIndex = evt.currentTarget.value;
           evt.currentTarget.classList.add('.map__pin--active');
         });
-        document.removeEventListener('keydown', window.card.removeCardKeydownHandler);
-        document.addEventListener('keydown', window.card.removeCardKeydownHandler);
         window.appendedPins.push(renderedPin);
         fragmentPins.appendChild(renderedPin);
       }
