@@ -1,6 +1,7 @@
 'use strict';
 
 (function () {
+  var DEBOUNCE_DELAY = 500;
   var mapFiltersContainer = document.querySelector('.map__filters-container');
   var filterForm = document.querySelector('.map__filters');
   var filterFormType = document.querySelector('#housing-type');
@@ -56,7 +57,7 @@
     }
   };
 
-  var filterFormTotally = function () {
+  var filterFormTotally = window.util.debounce(function () {
     var filteredData = window.loadedData.slice();
 
     filteredData = filteredData.filter(function (item) {
@@ -81,7 +82,7 @@
     window.card.removeCard();
     window.map.deletePins();
     window.map.drawPins(filteredData);
-  };
+  }, DEBOUNCE_DELAY);
 
   filterForm.addEventListener('change', filterFormTotally);
 

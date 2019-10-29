@@ -25,11 +25,28 @@
     }
   };
 
+  var debounce = function (callback, delay) {
+    var timer = null;
+
+    return function () {
+      var args = arguments;
+
+      if (timer) {
+        clearTimeout(timer);
+      }
+
+      timer = setTimeout(function () {
+        callback(null, args);
+      }, delay);
+    };
+  };
+
   window.util = {
+    ENTER_KEYCODE: ENTER_KEYCODE,
+    ESC_KEYCODE: ESC_KEYCODE,
     map: map,
     getNounForms: getNounForms,
-    ENTER_KEYCODE: ENTER_KEYCODE,
-    ESC_KEYCODE: ESC_KEYCODE
+    debounce: debounce
   };
 })();
 

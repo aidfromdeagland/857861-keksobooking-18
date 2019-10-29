@@ -71,6 +71,12 @@
   advertPrice.max = ADVERT_MAXIMUM_PRICE;
   advertPrice.min = ADVERT_MINIMUM_PRICE;
 
+  var disableInputsOutline = function () {
+    advertTitle.style.outline = 'none';
+    advertRoomNumber.style.outline = 'none';
+    advertPrice.style.outline = 'none';
+  };
+
   var validateTitle = function () {
     if (advertTitle.value.length < TITLE_MIN_LENGTH || advertTitle.value.length > TITLE_MAX_LENGTH) {
       advertTitle.setCustomValidity('Длина заголовка: от 30 до 100 кексимволов');
@@ -159,11 +165,13 @@
     advertForm.reset();
     mapFiltersForm.reset();
     setFormAddress('initial');
+    setPricePlaceholder();
     window.map.deletePins();
     window.card.removeCard();
     advertForm.classList.add('ad-form--disabled');
     disableForm(advertForm, true);
     disableForm(mapFiltersForm, true);
+    disableInputsOutline();
     removeFormListeners();
   };
 
