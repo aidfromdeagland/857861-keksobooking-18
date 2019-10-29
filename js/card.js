@@ -79,6 +79,7 @@
   var removeCard = function () {
     var mapCard = window.util.map.querySelector('.map__card');
     if (mapCard) {
+      document.removeEventListener('keydown', removeCardKeydownHandler);
       mapCard.remove();
     }
   };
@@ -95,6 +96,7 @@
     adFragment.appendChild(renderAdCard(loadedData[cardNumber]));
     window.util.map.insertBefore(adFragment, window.filter.mapFiltersContainer);
     window.util.map.querySelector('.popup__close').addEventListener('click', window.card.removeCard);
+    document.addEventListener('keydown', removeCardKeydownHandler);
   };
 
   window.card = {

@@ -49,8 +49,6 @@
           window.map.currentPinIndex = evt.currentTarget.value;
           evt.currentTarget.classList.add('.map__pin--active');
         });
-        document.removeEventListener('keydown', window.card.removeCardKeydownHandler);
-        document.addEventListener('keydown', window.card.removeCardKeydownHandler);
         window.appendedPins.push(renderedPin);
         fragmentPins.appendChild(renderedPin);
       }
@@ -71,18 +69,18 @@
     window.form.advertAddress.value = Math.round(window.map.pinMain.offsetLeft + window.map.PinMainData.WIDTH / 2) + ', ' + Math.round(window.map.pinMain.offsetTop + window.map.PinMainData.HEIGHT / 2);
   };
 
-  var activatePageByMouse = function () {
+  var mainPinMousedownHandler = function () {
     window.util.map.classList.remove('map--faded');
     window.form.activateForm();
     window.server.load(drawPins, window.modal.showErrorModal);
     window.form.advertForm.addEventListener('submit', window.form.formSubmitHandler);
-    pinMain.removeEventListener('mousedown', activatePageByMouse);
+    pinMain.removeEventListener('mousedown', mainPinMousedownHandler);
   };
 
-  var activatePageByEnter = function (evt) {
+  var mainPinKeydownHandler = function (evt) {
     if (evt.keyCode === window.util.ENTER_KEYCODE) {
-      activatePageByMouse();
-      pinMain.removeEventListener('keydown', activatePageByEnter);
+      mainPinMousedownHandler();
+      pinMain.removeEventListener('keydown', mainPinKeydownHandler);
     }
   };
 
@@ -91,12 +89,12 @@
     window.form.deactivateForm();
     respawnPin();
     window.form.advertForm.removeEventListener('submit', window.form.formSubmitHandler);
-    window.map.pinMain.addEventListener('mousedown', activatePageByMouse);
-    window.map.pinMain.addEventListener('keydown', activatePageByEnter);
+    window.map.pinMain.addEventListener('mousedown', mainPinMousedownHandler);
+    window.map.pinMain.addEventListener('keydown', mainPinKeydownHandler);
   };
 
-  pinMain.addEventListener('mousedown', activatePageByMouse);
-  pinMain.addEventListener('keydown', activatePageByEnter);
+  pinMain.addEventListener('mousedown', mainPinMousedownHandler);
+  pinMain.addEventListener('keydown', mainPinKeydownHandler);
 
   window.map = {
     pinMain: pinMain,
