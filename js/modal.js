@@ -41,13 +41,13 @@
   };
 
   var showSuccessModal = function () {
-    window.map.deactivatePage();
+
     var templateSuccess = document.querySelector('#success').content.querySelector('.success');
     var clonedSuccess = templateSuccess.cloneNode(true);
     var fragmentSuccess = document.createDocumentFragment();
     fragmentSuccess.appendChild(clonedSuccess);
 
-    var annihilateSuccesModal = function () {
+    var removeSuccessModal = function () {
       clonedSuccess.removeEventListener('click', successClickHandler);
       document.removeEventListener('keydown', successKeydownHandler);
       clonedSuccess.remove();
@@ -55,19 +55,20 @@
 
     var successClickHandler = function (evt) {
       if (evt.target !== clonedSuccess.querySelector('.success__message')) {
-        annihilateSuccesModal();
+        removeSuccessModal();
       }
     };
 
     var successKeydownHandler = function (evt) {
       if (evt.keyCode === window.util.ESC_KEYCODE) {
-        annihilateSuccesModal();
+        removeSuccessModal();
       }
     };
 
     clonedSuccess.addEventListener('click', successClickHandler);
     document.addEventListener('keydown', successKeydownHandler);
     mainNode.appendChild(fragmentSuccess);
+    window.map.deactivatePage();
   };
 
   window.modal = {

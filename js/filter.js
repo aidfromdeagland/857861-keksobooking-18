@@ -2,7 +2,6 @@
 
 (function () {
   var DEBOUNCE_DELAY = 500;
-  var mapFiltersContainer = document.querySelector('.map__filters-container');
   var filterForm = document.querySelector('.map__filters');
   var filterFormType = document.querySelector('#housing-type');
   var filterFormPrice = document.querySelector('#housing-price');
@@ -27,67 +26,49 @@
 
   var filterSelect = function (input, item, prop) {
     if (input.value !== 'any') {
-      return item['offer'][prop].toString() === input.value;
-    } else {
-      return true;
+      return item.offer[prop].toString() === input.value;
     }
+
+    return true;
   };
 
   var filterPrice = function (input, item) {
     if (input.value !== 'any') {
-      return item['offer']['price'] >= FilterPriceMap[input.value].MIN &&
-      item['offer']['price'] < FilterPriceMap[input.value].MAX;
-    } else {
-      return true;
+      return item.offer.price >= FilterPriceMap[input.value].MIN &&
+      item.offer.price < FilterPriceMap[input.value].MAX;
     }
+
+    return true;
   };
 
   var filterFeatures = function (item) {
-    var checkedFeatures = [];
-    filterFormFeatures.querySelectorAll('input[type="checkbox"]:checked').forEach(function (element) {
-      checkedFeatures.push(element.value);
-    });
+    var checkedFeatures = Array.from(filterFormFeatures.querySelectorAll('input[type="checkbox"]:checked'));
 
-    if (checkedFeatures.length !== 0) {
-      return checkedFeatures.every(function (element) {
-        return item['offer']['features'].indexOf(element) !== -1;
-      });
-    } else {
+    if (checkedFeatures.length === 0) {
       return true;
     }
+
+    return checkedFeatures.every(function (element) {
+      return item.offer.features.indexOf(element.value) !== -1;
+    });
   };
 
   var filterFormTotally = window.util.debounce(function () {
     var filteredData = window.loadedData.slice();
 
     filteredData = filteredData.filter(function (item) {
-      return filterSelect(filterFormType, item, 'type');
+      return filterSelect(filterFormType, item, 'type') &&
+      filterSelect(filterFormRooms, item, 'rooms') &&
+      filterSelect(filterFormGuests, item, 'guests') &&
+      filterPrice(filterFormPrice, item) &&
+      filterFeatures(item);
     });
 
-    filteredData = filteredData.filter(function (item) {
-      return filterSelect(filterFormRooms, item, 'rooms');
-    });
-
-    filteredData = filteredData.filter(function (item) {
-      return filterSelect(filterFormGuests, item, 'guests');
-    });
-
-    filteredData = filteredData.filter(function (item) {
-      return filterPrice(filterFormPrice, item);
-    });
-
-    filteredData = filteredData.filter(function (item) {
-      return filterFeatures(item);
-    });
     window.card.removeCard();
     window.map.deletePins();
     window.map.drawPins(filteredData);
   }, DEBOUNCE_DELAY);
 
   filterForm.addEventListener('change', filterFormTotally);
-
-  window.filter = {
-    mapFiltersContainer: mapFiltersContainer
-  };
 
 })();

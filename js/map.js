@@ -22,37 +22,31 @@
   window.appendedPins = [];
   window.loadedData = [];
 
-  var renderPin = function (index, adArray) {
+  var renderPin = function (item) {
     var clonedPin = pinTemplate.cloneNode(true);
-    clonedPin.style = 'left: ' + (adArray[index].location.x - PinData.WIDTH / 2) +
-    'px; top: ' + (adArray[index].location.y - PinData.HEIGHT) + 'px;';
-    clonedPin.firstElementChild.src = adArray[index].author.avatar;
-    clonedPin.firstElementChild.alt = adArray[index].offer.description;
-    clonedPin.value = index;
+    clonedPin.style.left = (item.location.x - PinData.WIDTH / 2) + 'px';
+    clonedPin.style.top = (item.location.y - PinData.HEIGHT) + 'px';
+    clonedPin.firstElementChild.src = item.author.avatar;
+    clonedPin.firstElementChild.alt = item.offer.description;
     return clonedPin;
   };
 
   var drawPins = function (adList) {
     var fragmentPins = document.createDocumentFragment();
+    var adListLimited = adList.slice(0, DATA_QUANTITY);
 
-    for (var i = 0; i < DATA_QUANTITY && i < adList.length; i++) {
-      if (adList[i].offer) {
-        var renderedPin = renderPin(i, adList);
+    adListLimited.forEach(function (item) {
+      if (item.offer) {
+        var renderedPin = renderPin(item);
         renderedPin.addEventListener('click', function (evt) {
           evt.preventDefault();
-          var cardNumber = evt.currentTarget.value;
-          window.card.showCard(cardNumber, adList);
-          var valueSelector = 'button[value="' + window.map.currentPinIndex + '"]';
-          if (window.map.currentPinIndex) {
-            window.util.map.querySelector(valueSelector).classList.remove('.map__pin--active');
-          }
-          window.map.currentPinIndex = evt.currentTarget.value;
+          window.card.showCard(item);
           evt.currentTarget.classList.add('.map__pin--active');
         });
         window.appendedPins.push(renderedPin);
         fragmentPins.appendChild(renderedPin);
       }
-    }
+    });
     pinsArea.appendChild(fragmentPins);
   };
 
@@ -66,14 +60,20 @@
   var respawnPin = function () {
     window.map.pinMain.style.left = (PinMainData.DEFAULT_X) + 'px';
     window.map.pinMain.style.top = (PinMainData.DEFAULT_Y) + 'px';
-    window.form.advertAddress.value = Math.round(window.map.pinMain.offsetLeft + window.map.PinMainData.WIDTH / 2) + ', ' + Math.round(window.map.pinMain.offsetTop + window.map.PinMainData.HEIGHT / 2);
+    window.form.setFormAddress('initial');
+  };
+
+  var formSubmitHandler = function (evt) {
+    evt.preventDefault();
+    var formData = new FormData(window.form.advertForm);
+    window.server.upload(formData, window.modal.showSuccessModal, window.modal.showErrorModal);
   };
 
   var mainPinMousedownHandler = function () {
     window.util.map.classList.remove('map--faded');
     window.form.activateForm();
     window.server.load(drawPins, window.modal.showErrorModal);
-    window.form.advertForm.addEventListener('submit', window.form.formSubmitHandler);
+    window.form.advertForm.addEventListener('submit', formSubmitHandler);
     pinMain.removeEventListener('mousedown', mainPinMousedownHandler);
   };
 
@@ -88,7 +88,7 @@
     window.util.map.classList.add('map--faded');
     window.form.deactivateForm();
     respawnPin();
-    window.form.advertForm.removeEventListener('submit', window.form.formSubmitHandler);
+    window.form.advertForm.removeEventListener('submit', formSubmitHandler);
     window.map.pinMain.addEventListener('mousedown', mainPinMousedownHandler);
     window.map.pinMain.addEventListener('keydown', mainPinKeydownHandler);
   };
@@ -100,9 +100,7 @@
     pinMain: pinMain,
     deactivatePage: deactivatePage,
     drawPins: drawPins,
-    PinData: PinData,
     PinMainData: PinMainData,
-    respawnPin: respawnPin,
     deletePins: deletePins
   };
 

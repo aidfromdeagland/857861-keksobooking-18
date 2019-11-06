@@ -24,22 +24,12 @@
   var advertAddress = advertForm.querySelector('#address');
   var advertReset = advertForm.querySelector('.ad-form__reset');
 
-  var disableForm = function (form, boolean) {
-    var specificCollection = function (ancestor, selector) {
-      return ancestor.querySelectorAll(selector)
-      ;
-    };
+  var disableForm = function (form, isActive) {
+    var selectsAndFieldsets = form.querySelectorAll('select, fieldset');
 
-    var selects = specificCollection(form, 'select');
-    var fieldsets = specificCollection(form, 'fieldset');
-
-    for (var i = 0; i < selects.length; i++) {
-      selects[i].disabled = boolean;
-    }
-
-    for (var k = 0; k < fieldsets.length; k++) {
-      fieldsets[k].disabled = boolean;
-    }
+    selectsAndFieldsets.forEach(function (item) {
+      item.disabled = isActive;
+    });
   };
 
   advertAddress.readOnly = true;
@@ -53,7 +43,10 @@
       divider = 2;
     }
 
-    advertAddress.value = Math.round(window.map.pinMain.offsetLeft + window.map.pinMain.offsetWidth / 2) + ', ' + Math.round(window.map.pinMain.offsetTop + window.map.pinMain.offsetHeight / divider + tail);
+    var coordX = window.map.pinMain.offsetLeft + window.map.pinMain.offsetWidth / 2;
+    var coordY = window.map.pinMain.offsetTop + window.map.pinMain.offsetHeight / divider + tail;
+
+    advertAddress.value = Math.round(coordX) + ', ' + Math.round(coordY);
   };
 
   setFormAddress('initial');
@@ -180,20 +173,14 @@
     window.map.deactivatePage();
   });
 
-  var formSubmitHandler = function (evt) {
-    evt.preventDefault();
-    var formData = new FormData(advertForm);
-    window.server.upload(formData, window.modal.showSuccessModal, window.modal.showErrorModal);
-  };
-
   window.form = {
     advertForm: advertForm,
+    advertAddress: advertAddress,
     mapFiltersForm: mapFiltersForm,
     disableForm: disableForm,
-    advertAddress: advertAddress,
+    setFormAddress: setFormAddress,
     activateForm: activateForm,
     deactivateForm: deactivateForm,
-    formSubmitHandler: formSubmitHandler
   };
 
   window.map.deactivatePage();

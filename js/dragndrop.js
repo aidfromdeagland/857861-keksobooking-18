@@ -37,13 +37,13 @@
         var setPinCoord = function (value, min, max) {
           if (value < max && value > min) {
             return value;
-          } else {
-            if (value >= max) {
-              return max;
-            } else {
-              return min;
-            }
           }
+
+          if (value >= max) {
+            return max;
+          }
+
+          return min;
         };
 
         element.style.left = setPinCoord(elementCurrentX, elementMinX, elementMaxX) + 'px';
