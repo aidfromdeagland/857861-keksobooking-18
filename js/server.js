@@ -18,7 +18,7 @@
     xhr.addEventListener('load', function () {
       if (xhr.status === STATUS_SUCCESS) {
         window.loadedData = xhr.response;
-        window.form.disableForm(window.form.mapFiltersForm, false);
+        window.form.disable(window.form.mapFilters, false);
         onSuccess(xhr.response);
       } else {
         onError('Ошибка: ' + xhr.status + '.');

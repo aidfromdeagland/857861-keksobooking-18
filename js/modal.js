@@ -72,8 +72,8 @@
   };
 
   window.modal = {
-    showErrorModal: showErrorModal,
-    showSuccessModal: showSuccessModal
+    showError: showErrorModal,
+    showSuccess: showSuccessModal
   };
 
 })();

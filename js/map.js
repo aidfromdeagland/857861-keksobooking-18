@@ -41,8 +41,8 @@
       var renderedPin = renderPin(item);
       renderedPin.addEventListener('click', function (evt) {
         evt.preventDefault();
-        window.card.showCard(item);
-        evt.currentTarget.classList.ad('.map__pin--active');
+        window.card.show(item);
+        evt.currentTarget.classList.add('.map__pin--active');
       });
       window.appendedPins.push(renderedPin);
       fragmentPins.appendChild(renderedPin);
@@ -58,25 +58,25 @@
   };
 
   var respawnPin = function () {
-    window.map.pinMain.style.left = (PinMainData.DEFAULT_X) + 'px';
-    window.map.pinMain.style.top = (PinMainData.DEFAULT_Y) + 'px';
-    window.form.setFormAddress('initial');
+    pinMain.style.left = (PinMainData.DEFAULT_X) + 'px';
+    pinMain.style.top = (PinMainData.DEFAULT_Y) + 'px';
+    window.form.setAddress('initial');
   };
 
   var formSubmitHandler = function (evt) {
     evt.preventDefault();
-    var formData = new FormData(window.form.advertForm);
-    window.server.upload(formData, window.modal.showSuccessModal, window.modal.showErrorModal);
+    var formData = new FormData(window.form.advert);
+    window.server.upload(formData, window.modal.showSuccess, window.modal.showError);
   };
 
   var mainPinMousedownHandler = function () {
     window.util.map.classList.remove('map--faded');
-    window.form.activateForm();
+    window.form.activate();
     window.server.load(drawPins, function (errorText) {
-      window.modal.showErrorModal(errorText);
+      window.modal.showError(errorText);
       deactivatePage();
     });
-    window.form.advertForm.addEventListener('submit', formSubmitHandler);
+    window.form.advert.addEventListener('submit', formSubmitHandler);
     pinMain.removeEventListener('mousedown', mainPinMousedownHandler);
   };
 
@@ -89,12 +89,12 @@
 
   var deactivatePage = function () {
     window.util.map.classList.add('map--faded');
-    window.form.deactivateForm();
+    window.form.deactivate();
     respawnPin();
     window.removeLoadedImages();
-    window.form.advertForm.removeEventListener('submit', formSubmitHandler);
-    window.map.pinMain.addEventListener('mousedown', mainPinMousedownHandler);
-    window.map.pinMain.addEventListener('keydown', mainPinKeydownHandler);
+    window.form.advert.removeEventListener('submit', formSubmitHandler);
+    pinMain.addEventListener('mousedown', mainPinMousedownHandler);
+    pinMain.addEventListener('keydown', mainPinKeydownHandler);
   };
 
   pinMain.addEventListener('mousedown', mainPinMousedownHandler);

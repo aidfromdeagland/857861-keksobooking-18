@@ -48,6 +48,26 @@
     photosNode.appendChild(photosFragment);
   };
 
+  var getNounForms = function (guestsQuantity, wordForms) {
+
+    if (guestsQuantity >= 11 && guestsQuantity <= 14) {
+      return wordForms[2];
+    } else {
+      var stringedValue = guestsQuantity + '';
+      var lastChar = stringedValue.charAt(stringedValue.length - 1);
+
+      if (+lastChar === 1) {
+        return wordForms[0];
+      }
+
+      if (+lastChar >= 2 && +lastChar <= 4) {
+        return wordForms[1];
+      }
+
+      return wordForms[2];
+    }
+  };
+
   var renderAdCard = function (ad) {
     var adCard = templateCard.cloneNode(true);
     adCard.querySelector('.popup__avatar').src = ad.author.avatar;
@@ -58,8 +78,8 @@
     adCard.querySelector('.popup__text--time').textContent = 'Заезд после ' +
       ad.offer.checkin + ', выезд до ' + ad.offer.checkout;
 
-    var roomsNounForm = window.util.getNounForms(ad.offer.rooms, ROOMS_FORMS);
-    var guestsNounForm = window.util.getNounForms(ad.offer.guests, GUESTS_FORMS);
+    var roomsNounForm = getNounForms(ad.offer.rooms, ROOMS_FORMS);
+    var guestsNounForm = getNounForms(ad.offer.guests, GUESTS_FORMS);
     adCard.querySelector('.popup__text--capacity').textContent = ad.offer.rooms + ' ' +
       roomsNounForm + ' для ' + ad.offer.guests + ' ' + guestsNounForm;
 
@@ -105,16 +125,16 @@
   var filtersContainer = document.querySelector('.map__filters-container');
 
   var showCard = function (item) {
-    window.card.removeCard();
+    removeCard();
     var adFragment = document.createDocumentFragment();
     adFragment.appendChild(renderAdCard(item));
     window.util.map.insertBefore(adFragment, filtersContainer);
-    window.util.map.querySelector('.popup__close').addEventListener('click', window.card.removeCard);
+    window.util.map.querySelector('.popup__close').addEventListener('click', removeCard);
     document.addEventListener('keydown', removeCardKeydownHandler);
   };
 
   window.card = {
-    removeCard: removeCard,
-    showCard: showCard
+    remove: removeCard,
+    show: showCard
   };
 })();

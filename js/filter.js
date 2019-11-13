@@ -25,32 +25,26 @@
   };
 
   var filterSelect = function (input, item, prop) {
-    if (input.value !== 'any') {
-      return item.offer[prop].toString() === input.value;
-    }
-
-    return true;
+    return input.value !== 'any' ?
+      item.offer[prop].toString() === input.value
+      : true;
   };
 
   var filterPrice = function (input, item) {
-    if (input.value !== 'any') {
-      return item.offer.price >= FilterPriceMap[input.value].MIN &&
-      item.offer.price < FilterPriceMap[input.value].MAX;
-    }
-
-    return true;
+    return input.value !== 'any' ?
+      item.offer.price >= FilterPriceMap[input.value].MIN &&
+      item.offer.price < FilterPriceMap[input.value].MAX
+      : true;
   };
 
   var filterFeatures = function (item) {
     var checkedFeatures = Array.from(filterFormFeatures.querySelectorAll('input[type="checkbox"]:checked'));
 
-    if (checkedFeatures.length === 0) {
-      return true;
-    }
-
-    return checkedFeatures.every(function (element) {
-      return item.offer.features.indexOf(element.value) !== -1;
-    });
+    return checkedFeatures.length === 0 ?
+      true
+      : checkedFeatures.every(function (element) {
+        return item.offer.features.indexOf(element.value) !== -1;
+      });
   };
 
   var filterFormTotally = window.util.debounce(function () {
@@ -64,7 +58,7 @@
       filterFeatures(item);
     });
 
-    window.card.removeCard();
+    window.card.remove();
     window.map.deletePins();
     window.map.drawPins(filteredData);
   }, DEBOUNCE_DELAY);

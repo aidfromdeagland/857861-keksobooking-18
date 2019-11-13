@@ -160,7 +160,7 @@
     setFormAddress('initial');
     setPricePlaceholder();
     window.map.deletePins();
-    window.card.removeCard();
+    window.card.remove();
     advertForm.classList.add('ad-form--disabled');
     disableForm(advertForm, true);
     disableForm(mapFiltersForm, true);
@@ -174,13 +174,13 @@
   });
 
   window.form = {
-    advertForm: advertForm,
+    advert: advertForm,
     advertAddress: advertAddress,
-    mapFiltersForm: mapFiltersForm,
-    disableForm: disableForm,
-    setFormAddress: setFormAddress,
-    activateForm: activateForm,
-    deactivateForm: deactivateForm,
+    mapFilters: mapFiltersForm,
+    disable: disableForm,
+    setAddress: setFormAddress,
+    activate: activateForm,
+    deactivate: deactivateForm,
   };
 
   window.map.deactivatePage();
