@@ -49,7 +49,6 @@
   };
 
   var getNounForms = function (guestsQuantity, wordForms) {
-
     if (guestsQuantity >= 11 && guestsQuantity <= 14) {
       return wordForms[2];
     } else {
@@ -118,7 +117,7 @@
 
   var removeCardKeydownHandler = function (evt) {
     if (evt.keyCode === window.util.ESC_KEYCODE) {
-      window.card.removeCard();
+      removeCard();
     }
   };
 
