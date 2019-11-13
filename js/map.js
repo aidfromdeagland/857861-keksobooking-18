@@ -33,19 +33,19 @@
 
   var drawPins = function (adList) {
     var fragmentPins = document.createDocumentFragment();
-    var adListLimited = adList.slice(0, DATA_QUANTITY);
+    var adListLimited = adList.filter(function (item) {
+      return item.offer;
+    }).slice(0, DATA_QUANTITY);
 
     adListLimited.forEach(function (item) {
-      if (item.offer) {
-        var renderedPin = renderPin(item);
-        renderedPin.addEventListener('click', function (evt) {
-          evt.preventDefault();
-          window.card.showCard(item);
-          evt.currentTarget.classList.add('.map__pin--active');
-        });
-        window.appendedPins.push(renderedPin);
-        fragmentPins.appendChild(renderedPin);
-      }
+      var renderedPin = renderPin(item);
+      renderedPin.addEventListener('click', function (evt) {
+        evt.preventDefault();
+        window.card.showCard(item);
+        evt.currentTarget.classList.ad('.map__pin--active');
+      });
+      window.appendedPins.push(renderedPin);
+      fragmentPins.appendChild(renderedPin);
     });
     pinsArea.appendChild(fragmentPins);
   };
@@ -72,7 +72,10 @@
   var mainPinMousedownHandler = function () {
     window.util.map.classList.remove('map--faded');
     window.form.activateForm();
-    window.server.load(drawPins, window.modal.showErrorModal);
+    window.server.load(drawPins, function (errorText) {
+      window.modal.showErrorModal(errorText);
+      deactivatePage();
+    });
     window.form.advertForm.addEventListener('submit', formSubmitHandler);
     pinMain.removeEventListener('mousedown', mainPinMousedownHandler);
   };
@@ -88,6 +91,7 @@
     window.util.map.classList.add('map--faded');
     window.form.deactivateForm();
     respawnPin();
+    window.removeLoadedImages();
     window.form.advertForm.removeEventListener('submit', formSubmitHandler);
     window.map.pinMain.addEventListener('mousedown', mainPinMousedownHandler);
     window.map.pinMain.addEventListener('keydown', mainPinKeydownHandler);

@@ -29,13 +29,12 @@
       onError('Время ожидания ответа (' + TIMEOUT / 1000 + ' секунд) истекло.');
     });
 
-    xhr.timeout = TIMEOUT;
-
     xhr.addEventListener('error', function () {
       onError('Ошибка соединения ' + xhr.status + '.');
     });
 
     xhr.open(method, url);
+    xhr.timeout = TIMEOUT;
     xhr.send(data || null);
   };
 
