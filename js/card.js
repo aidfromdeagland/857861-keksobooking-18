@@ -49,17 +49,22 @@
   };
 
   var getNounForms = function (guestsQuantity, wordForms) {
-    if (guestsQuantity >= 11 && guestsQuantity <= 14) {
+    var stringedValue = guestsQuantity + '';
+
+    if (stringedValue.endsWith('11')
+      || stringedValue.endsWith('12')
+      || stringedValue.endsWith('13')
+      || stringedValue.endsWith('14')) {
       return wordForms[2];
     } else {
-      var stringedValue = guestsQuantity + '';
-      var lastChar = stringedValue.charAt(stringedValue.length - 1);
 
-      if (+lastChar === 1) {
+      if (stringedValue.endsWith('1')) {
         return wordForms[0];
       }
 
-      if (+lastChar >= 2 && +lastChar <= 4) {
+      if (stringedValue.endsWith('2')
+      || stringedValue.endsWith('3')
+      || stringedValue.endsWith('4')) {
         return wordForms[1];
       }
 
